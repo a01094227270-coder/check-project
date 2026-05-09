@@ -48,11 +48,16 @@ export default async function DashboardPage() {
     (r) => r.review_status === "unreviewed"
   ).length;
 
+  const avgProgress = projectList.length > 0
+    ? Math.round(projectList.reduce((sum, p) => sum + p.progress_percent, 0) / projectList.length)
+    : 0;
+
   const stats = {
     total: projectList.length,
     active: projectList.filter((p) => p.status === "active").length,
     paused: projectList.filter((p) => p.status === "paused").length,
     unreviewed: unreviewedCount,
+    avgProgress,
   };
 
   return (

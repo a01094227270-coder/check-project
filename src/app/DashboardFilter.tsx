@@ -20,7 +20,7 @@ export default function DashboardFilter({
 }: {
   projects: Project[];
   latestBySlug: Record<string, Report>;
-  stats: { total: number; active: number; paused: number; unreviewed: number };
+  stats: { total: number; active: number; paused: number; unreviewed: number; avgProgress: number };
 }) {
   const [filter, setFilter] = useState<Filter>("all");
 
@@ -31,6 +31,27 @@ export default function DashboardFilter({
 
   return (
     <>
+      {/* 전체 포트폴리오 진행률 요약 */}
+      <div className="bg-white rounded-xl border p-5 shadow-sm">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <p className="text-xs text-gray-500 mb-1">전체 포트폴리오 평균 진행률</p>
+            <p className="text-4xl font-bold text-gray-900">{stats.avgProgress}%</p>
+          </div>
+          <div className="text-right text-xs text-gray-400 leading-6">
+            <p>전체 {stats.total}개 프로젝트</p>
+            <p>{stats.active}개 진행중 · {stats.paused}개 보류</p>
+            <p>미확인 리포트 <span className={stats.unreviewed > 0 ? "text-red-500 font-semibold" : ""}>{stats.unreviewed}건</span></p>
+          </div>
+        </div>
+        <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-blue-400 to-blue-600 transition-all duration-500"
+            style={{ width: `${stats.avgProgress}%` }}
+          />
+        </div>
+      </div>
+
       {/* 통계 바 */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <StatCard label="전체 프로젝트" value={stats.total} color="gray" />
@@ -103,6 +124,12 @@ export default function DashboardFilter({
                       <p className="text-gray-400">최근: {r.report_date}</p>
                       <ReviewBadge status={r.review_status} />
                     </div>
+                    {r.today_work && (
+                      <p className="line-clamp-2">
+                        <span className="text-gray-400">오늘: </span>
+                        {r.today_work}
+                      </p>
+                    )}
                     {r.next_work && (
                       <p className="line-clamp-2">
                         <span className="text-gray-400">다음: </span>
